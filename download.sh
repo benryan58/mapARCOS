@@ -6,3 +6,5 @@ curl https://www2.census.gov/geo/tiger/GENZ2017/shp/cb_2017_us_zcta510_500k.zip 
 
 # Unzip the file locally. This creates files totalling another ~95 MB
 unzip cb_2017_us_zcta510_500k.zip
+
+eval python3 download_arcos.py -s https://www.deadiversion.usdoj.gov/arcos/retail_drug_summary/ -v
