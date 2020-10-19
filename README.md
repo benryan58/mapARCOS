@@ -27,3 +27,9 @@ Click through for an interactive look at the data:
   </object>
 </div>
 
+<br>
+Source for ARCOS data:
+- https://www.deadiversion.usdoj.gov/arcos/index.html
+
+Source for zip code shapefile:
+- https://www2.census.gov/geo/tiger/GENZ2017/shp/
