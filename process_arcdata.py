@@ -6,6 +6,17 @@ import re
 import subprocess
 from tqdm import tqdm
 
+def aggregate_zips(zip_file, zip_path, write_out=True):
+    zip_file['aggZip'] = zip_file.apply(lambda x: int(x['GEOID10'][0:3]), axis=1)
+    zipshp = zip_file.dissolve(by='aggZip',aggfunc='sum')
+    zipshp.reset_index(inplace=True)
+
+    if write_out:
+        zipshp.to_file(os.path.join(os.path.dirname(zip_path),'aggzips.shp'), 
+                       index=False)
+    
+    return zipshp
+
 def clean_line(line):
     # normalize formatting for the line for further parsing
     line = re.sub(r"\s+", " ", line)
@@ -28,6 +39,17 @@ def get_drug_info(line):
         drugName = drugName.strip()
 
     return drugCode, drugName
+
+def get_pdf_text(pdf_path, *args):
+
+    if len(args) == 0:
+        args = ('-table','-enc','UTF-8')
+
+    process_call = ['pdftotext'] + [str(a) for a in args] + [pdf_path, '-']
+
+    pdf = subprocess.run(process_call, capture_output=True)
+
+    return pdf.stdout.decode()
 
 def get_periods(line):
     # extract start and end dates for reporting period from line
@@ -102,17 +124,6 @@ def parse_pdf(arc_text, verbose=True):
     report_df = pd.DataFrame(rows, columns=cols)
 
     return report_df
-
-def get_pdf_text(pdf_path, *args):
-
-    if len(args) == 0:
-        args = ('-table','-enc','UTF-8')
-
-    process_call = ['pdftotext'] + [str(a) for a in args] + [pdf_path, '-']
-
-    pdf = subprocess.run(process_call, capture_output=True)
-
-    return pdf.stdout.decode()
 
 def run(args):
     verbose = args.verbose
